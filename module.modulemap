@@ -1,0 +1,5 @@
+module Cgetargv [system] {
+  header "/usr/local/include/libgetargv.h"
+  link "getargv"
+  export *
+}
