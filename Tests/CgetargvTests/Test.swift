@@ -16,11 +16,11 @@ final class CgetargvTests: XCTestCase {
 
     func testGetArgvOfPidWithNuls() {
         let options = GetArgvOptions(skip: 0, pid: getpid(), nuls: false)
-        var res = ArgvArgcResult();
+        var res = ArgvResult();
         XCTAssert(withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }))
 
         let expectedOutput = ProcessInfo.processInfo.arguments.flatMap { $0.utf8CString }
-        let actualOutput = Array(UnsafeBufferPointer<CChar>(start: res.start_pointer, count: res.end_pointer - res.start_pointer))
+        let actualOutput = Array(UnsafeBufferPointer<CChar>(start: res.start_pointer, count: res.end_pointer - res.start_pointer)!)
 
         XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
     }
@@ -31,7 +31,7 @@ final class CgetargvTests: XCTestCase {
         XCTAssert(get_argv_and_argc_of_pid(pid, &res))
 
         let expectedOutput = ProcessInfo.processInfo.arguments
-        let actualOutput = Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>>(start: res.argv, count: res.argc)).map { String(cString: $0) }
+        let actualOutput = Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>>(start: res.argv, count: res.argc)!).map { String(cString: $0) }
 
         XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
     }
