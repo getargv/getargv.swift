@@ -4,8 +4,11 @@ import XCTest
 
 final class CgetargvTests: XCTestCase {
     func testGetArgvOfPid() {
-        let input = getpid()
+        let options = GetArgvOptions(skip: 0, pid: getpid(), nuls: true)
+        var res = ArgvResult();
+        XCTAssert(withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }))
         let expectedOutput = ProcessInfo.processInfo.arguments.joined(separator: " ")
-        XCTAssertEqual(get_argv_of_pid(input), expectedOutput, "The Args are not correct.")
+        let actualOutput = String(cString: res.start_pointer)
+        XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
     }
 }
