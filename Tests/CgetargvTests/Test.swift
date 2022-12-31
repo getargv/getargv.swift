@@ -20,7 +20,7 @@ final class CgetargvTests: XCTestCase {
         XCTAssert(withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }))
 
         let expectedOutput = ProcessInfo.processInfo.arguments.flatMap { $0.utf8CString }
-        let actualOutput = Array(UnsafeBufferPointer<CChar>(start: res.start_pointer!, count: res.end_pointer - res.start_pointer))
+        let actualOutput = Array(UnsafeBufferPointer<CChar>(start: res.start_pointer!, count: res.end_pointer - res.start_pointer + 1))
 
         XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
     }
