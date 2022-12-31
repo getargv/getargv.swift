@@ -26,7 +26,7 @@ jobs:
         path: getargv-swift
     - name: Build
       run: swift build -v
-      working-directory: getargv-sys
+      working-directory: getargv-swift
     - name: Run tests
       run: swift test -v
-      working-directory: getargv-sys
+      working-directory: getargv-swift
