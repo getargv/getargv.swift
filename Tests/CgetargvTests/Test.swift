@@ -16,7 +16,7 @@ final class CgetargvTests: XCTestCase {
 
     func testGetArgvOfPidWithNuls() {
         let options = GetArgvOptions(skip: 0, pid: getpid(), nuls: false)
-        var res = ArgvResult();
+        var res = ArgvArgcResult();
         XCTAssert(withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }))
 
         let expectedOutput = ProcessInfo.processInfo.arguments.flatMap { $0.utf8CString }
@@ -27,7 +27,7 @@ final class CgetargvTests: XCTestCase {
 
     func testGetArgvAndArgcOfPid() {
         let pid = getpid()
-        var res = ArgvResult();
+        var res = ArgvArgcResult();
         XCTAssert(get_argv_and_argc_of_pid(pid, &res))
 
         let expectedOutput = ProcessInfo.processInfo.arguments
