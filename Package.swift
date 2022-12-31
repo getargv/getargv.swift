@@ -5,14 +5,19 @@ import PackageDescription
 
 let package = Package(
   name: "Cgetargv",
-  products: [ .library(name: "Cgetargv", targets: ["Cgetargv"]) ],
+  products: [
+    .library(name: "Cgetargv", targets: ["Cgetargv"])
+  ],
   dependencies: [
-    .package(name:"ArgumentParser", url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
   ],
   targets: [
-    .executableTarget( name: "getargv", dependencies: ["Cgetargv","ArgumentParser"]),
-    .systemLibrary(name: "Cgetargv",  pkgConfig: "getargv",  providers: [ .brew(["libgetagv"])]),
-    .testTarget(name: "CgetargvTests", dependencies: ["Cgetargv"])
+    .executableTarget(name: "getargv", dependencies: [ "Cgetargv", .product(
+                                                                     name: "ArgumentParser",
+                                                                     package: "swift-argument-parser"
+                                                                   )]),
+    .systemLibrary(name: "Cgetargv",  pkgConfig: "getargv",  providers: [ .brew(["libgetagv"]) ]),
+    .testTarget(name: "CgetargvTests", dependencies: [ "Cgetargv" ])
   ],
   cLanguageStandard: .c99 // https://developer.apple.com/documentation/packagedescription/clanguagestandard
 )
