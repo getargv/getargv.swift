@@ -8,7 +8,7 @@ final class SwiftGetargvTests: XCTestCase {
 
         switch GetArgvOfPid(pid: getpid(), nuls: true) {
         case .success(let actualOutput):
-            XCTAssertEqual(actualOutput.array, expectedOutput, "The Args are not correct.")
+            XCTAssertEqual(actualOutput.array, Array(expectedOutput), "The Args are not correct.")
         case .failure(let error):
             XCTFail("GetArgvOfPid failed with \(error)")
         }
