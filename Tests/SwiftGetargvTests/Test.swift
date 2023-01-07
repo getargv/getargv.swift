@@ -4,7 +4,7 @@ import XCTest
 
 final class SwiftGetargvTests: XCTestCase {
     func testGetArgvOfPid() {
-        let expectedOutput = ProcessInfo.processInfo.arguments.joined(separator: " ")
+        let expectedOutput = ProcessInfo.processInfo.arguments.joined(separator: " ").utf8CString
 
         switch GetArgvOfPid(pid: getpid(), nuls: true) {
         case .success(let actualOutput):
