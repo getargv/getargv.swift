@@ -6,6 +6,7 @@ import PackageDescription
 let package = Package(
   name: "Cgetargv",
   products: [
+    .library(name: "SwiftGetargv", targets: ["SwiftGetargv"]),
     .library(name: "Cgetargv", targets: ["Cgetargv"])
   ],
   dependencies: [
@@ -16,7 +17,9 @@ let package = Package(
                                                                      name: "ArgumentParser",
                                                                      package: "swift-argument-parser"
                                                                    )]),
+    .target(name: "SwiftGetargv", dependencies: [ "Cgetargv" ]),
     .systemLibrary(name: "Cgetargv",  pkgConfig: "getargv",  providers: [ .brew(["libgetagv"]) ]),
+    .testTarget(name: "SwiftGetargvTests", dependencies: [ "SwiftGetargv" ]),
     .testTarget(name: "CgetargvTests", dependencies: [ "Cgetargv" ])
   ],
   cLanguageStandard: .c99 // https://developer.apple.com/documentation/packagedescription/clanguagestandard
