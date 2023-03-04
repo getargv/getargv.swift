@@ -28,7 +28,7 @@ struct getargv: ParsableCommand {
         let result = withUnsafePointer(to: options, { get_argv_of_pid($0, &res) })
         if (result) {
             print_argv_of_pid(res.start_pointer, res.end_pointer)
-            free(res.buffer)
+            free_ArgvResult(&res)
         } else {
             let err = Errno(rawValue: errno)
             var standardError = StandardError()

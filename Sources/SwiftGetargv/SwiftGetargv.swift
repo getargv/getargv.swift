@@ -10,7 +10,7 @@ public class PrintableArgvResult {
     }
 
     deinit {
-        if (res.buffer != nil) { free(res.buffer) }
+        if (res.buffer != nil) { free_ArgvResult(&res) }
     }
 
     public func print() -> Result<Void,Errno> {
@@ -41,8 +41,7 @@ public func GetArgvAndArgcOfPid(pid: pid_t) -> Result<Array<String>, Errno> {
     var res = ArgvArgcResult();
     if (!get_argv_and_argc_of_pid(pid, &res)) { return .failure(Errno(rawValue: errno)) }
 
-    defer{free(res.argv)}
-    defer{free(res.buffer)}
+    defer{free_ArgvArgcResult(&res)}
 
     return .success(Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc))).map { String(cString: $0!) })
 }

@@ -18,7 +18,7 @@ To make `getargv-swift`:
 
  - Install `libgetargv` to your system (see below).
  - Clone this repo and run `swift build` or
- - add a entry to the dependencies array in your `Package` in your `Package.swift` file: `.package(url: "https://github.com/getargv/getargv-swift", from: "0.0.3")` and an entry in the dependencies array of your target `.product(name: "Cgetargv", package: "getargv-swift")`
+ - Add an entry to the dependencies array in your `Package` in your `Package.swift` file: `.package(url: "https://github.com/getargv/getargv-swift", from: "0.0.3")` and an entry in the dependencies array of your target `.product(name: "Cgetargv", package: "getargv-swift")`
 ## Installing `libgetargv`
 
 To get access to `libgetargv`, sign up for an appropriate [sponsorship tier](https://github.com/sponsors/CamJN).
