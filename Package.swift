@@ -13,6 +13,10 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
   ],
   targets: [
+    .executableTarget(name: "getargv2", dependencies: [ "SwiftGetargv", .product(
+                                                                     name: "ArgumentParser",
+                                                                     package: "swift-argument-parser"
+                                                                   )]),
     .executableTarget(name: "getargv", dependencies: [ "Cgetargv", .product(
                                                                      name: "ArgumentParser",
                                                                      package: "swift-argument-parser"
