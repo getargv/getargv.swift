@@ -23,15 +23,12 @@ struct getargv: ParsableCommand {
     var pid: pid_t
 
     mutating func run() throws {
-        switch GetArgvOfPid(pid: pid, skip: skip ?? 0, nuls: !keepNuls) {
-        case .success(let result):
-            if case .failure(let err) = result.print() {
-                var standardError = StandardError()
-                print("getargv: '\(err.description)'", to: &standardError)
-            }
-        case .failure(let error):
+        do {
+            let result = try GetArgvOfPid(pid: pid, skip: skip ?? 0, nuls: !keepNuls).get()
+            try result.print().get()
+        } catch {
             var standardError = StandardError()
-            print("getargv: '\(error)'", to: &standardError)
+            print("getargv: '\(error.localizedDescription)'", to: &standardError)
         }
     }
 }
