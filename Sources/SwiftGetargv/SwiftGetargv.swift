@@ -2,6 +2,23 @@ import Cgetargv
 import Foundation
 import System
 
+public extension Optional {
+
+    var isNil: Bool {
+        switch self {
+        case Optional.none:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isSome: Bool {
+        return !self.isNil
+    }
+
+}
+
 @available(macOS 11, *)
 public class PrintableArgvResult {
     var res: ArgvResult;
@@ -37,11 +54,13 @@ public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Resu
 }
 
 @available(macOS 11, *)
-public func GetArgvAndArgcOfPid(pid: pid_t) -> Result<Array<String>, Errno> {
+public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding) -> Result<Array<String>, Errno> {
     var res = ArgvArgcResult();
     if (!get_argv_and_argc_of_pid(pid, &res)) { return .failure(Errno(rawValue: errno)) }
 
     defer{free_ArgvArgcResult(&res)}
 
-    return .success(Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc))).map { String(cString: $0!) })
+    let opt_arr = Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc))).map { String(cString: $0!, encoding: encoding) }
+    // there really should be a more efficient way to do this with reduce instead of map scan map
+    return opt_arr.allSatisfy { $0.isSome } ? .success(opt_arr.map{$0!}) : .failure(Errno(rawValue: EILSEQ))
 }
