@@ -2,6 +2,20 @@ import Cgetargv
 import Foundation
 import System
 
+@available(macOS 11, *)
+public extension String {
+    init(
+      cString cstr: UnsafePointer<CChar>,
+      encoding enc: String.Encoding
+    ) throws {
+        if case let .some(str) = String(cString: cstr, encoding: enc) {
+            self.init(str)
+        } else {
+            throw Errno(rawValue: EILSEQ)
+        }
+    }
+}
+
 public extension Optional {
 
     var isNil: Bool {
@@ -60,7 +74,9 @@ public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding) -> Result
 
     defer{free_ArgvArgcResult(&res)}
 
-    let opt_arr = Array(UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc))).map { String(cString: $0!, encoding: encoding) }
-    // there really should be a more efficient way to do this with reduce instead of map scan map
-    return opt_arr.allSatisfy { $0.isSome } ? .success(opt_arr.map{$0!}) : .failure(Errno(rawValue: EILSEQ))
+    do {
+        return .success(Array(try UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc)).map { try String(cString: $0!, encoding: encoding) }))
+    } catch {
+        return .failure(Errno(rawValue: EILSEQ))
+    }
 }
