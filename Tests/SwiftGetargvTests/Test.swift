@@ -28,7 +28,7 @@ final class SwiftGetargvTests: XCTestCase {
     func testGetArgvAndArgcOfPid() {
         let expectedOutput = ProcessInfo.processInfo.arguments
 
-        switch GetArgvAndArgcOfPid(pid: getpid(), String.Encoding.nonLossyASCII) {
+        switch GetArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII) {
         case .success(let actualOutput):
             XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
         case .failure(let error):
