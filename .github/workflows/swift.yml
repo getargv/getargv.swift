@@ -31,12 +31,12 @@ jobs:
       run: swift test -v
       working-directory: getargv-swift
     - name: Build docs
-      run: xcodebuild docbuild -scheme SwiftGetargv -derivedDataPath ./Docs/SwiftGetargv
+      run: xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
       working-directory: getargv-swift
     - uses: actions/upload-artifact@v3
       with:
         name: docs
-        path: getargv-swift/Docs/SwiftGetargv/*.doccarchive
+        path: getargv-swift/Docs/Build/Products/*/SwiftGetargv.doccarchive
 
   release:
     if: ${{ github.ref_type == 'tag' }}
