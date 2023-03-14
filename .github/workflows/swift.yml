@@ -33,6 +33,8 @@ jobs:
     - name: Build docs
       run: xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
       working-directory: getargv-swift
+    - run: xcodebuild -list && false
+      if: ${{ failure() }}
     - uses: actions/upload-artifact@v3
       with:
         name: docs
