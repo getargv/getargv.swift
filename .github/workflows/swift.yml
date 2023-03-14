@@ -34,13 +34,15 @@ jobs:
       run: |
         swift package generate-xcodeproj
         xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
+        tar -cf Docs/SwiftGetargv.doccarchive.tar Docs/Build/Products/*/SwiftGetargv.doccarchive
+        gzip -9 Docs/SwiftGetargv.doccarchive.tar
       working-directory: getargv-swift
     - run: xcodebuild -list && false
       if: ${{ failure() }}
     - uses: actions/upload-artifact@v3
       with:
         name: docs
-        path: getargv-swift/Docs/Build/Products/*/SwiftGetargv.doccarchive
+        path: getargv-swift/SwiftGetargv.doccarchive.tar.gz
 
   release:
     if: ${{ github.ref_type == 'tag' }}
