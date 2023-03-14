@@ -30,3 +30,23 @@ jobs:
     - name: Run tests
       run: swift test -v
       working-directory: getargv-swift
+    - name: Build docs
+      run: xcodebuild docbuild -scheme SwiftGetargv -derivedDataPath ./Docs/SwiftGetargv
+      working-directory: getargv-swift
+    - uses: actions/upload-artifact@v3
+      with:
+        name: docs
+        path: getargv-swift/Docs/SwiftGetargv/*.doccarchive
+
+  release:
+    if: ${{ github.ref_type == 'tag' }}
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        path: pkg
+    - uses: softprops/action-gh-release@v1
+      with:
+        files: pkg/docs
+        name: ${{ github.ref_name }}
