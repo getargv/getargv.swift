@@ -3,7 +3,7 @@ import Foundation
 import System
 
 @available(macOS 11, *)
-public extension String {
+extension String {
     init(
       cString cstr: UnsafePointer<CChar>,
       encoding enc: String.Encoding
@@ -16,7 +16,7 @@ public extension String {
     }
 }
 
-public extension Optional {
+extension Optional {
 
     var isNil: Bool {
         switch self {
