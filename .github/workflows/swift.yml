@@ -31,7 +31,9 @@ jobs:
       run: swift test -v
       working-directory: getargv-swift
     - name: Build docs
-      run: xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
+      run: |
+        swift package generate-xcodeproj
+        xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
       working-directory: getargv-swift
     - run: xcodebuild -list && false
       if: ${{ failure() }}
