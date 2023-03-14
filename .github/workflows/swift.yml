@@ -39,10 +39,15 @@ jobs:
       working-directory: getargv-swift
     - run: xcodebuild -list && false
       if: ${{ failure() }}
+      working-directory: getargv-swift
     - uses: actions/upload-artifact@v3
       with:
         name: docs
-        path: getargv-swift/SwiftGetargv.doccarchive.tar.gz
+        path: getargv-swift/Docs/SwiftGetargv.doccarchive.tar.gz
+        if-no-files-found: error
+    - run: ls -R Docs && false
+      if: ${{ failure() }}
+      working-directory: getargv-swift
 
   release:
     if: ${{ github.ref_type == 'tag' }}
