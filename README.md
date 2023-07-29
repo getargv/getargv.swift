@@ -2,7 +2,7 @@
 
 [![Swift CI](https://github.com/getargv/getargv.swift/actions/workflows/swift.yml/badge.svg)](https://github.com/getargv/getargv.swift/actions/workflows/swift.yml)
 
-`libgetargv` is a library that allows you to get the arguments that were passed to another running process on macOS. It is intended to provide roughly the same functionality as reading from `/proc/<pid>/cmdline` on Linux. On macOS this is done by parsing the output of the `KERN_PROCARGS2` sysctl, which is <abbr title="always, in my observation">very often</abbr> implemented [incorrectly](https://getargv.narzt.cam/hallofshame.html), due to the overlooked possibility of leading empty arguments passed to the target process. This crate is the Swift bindings for the `libgetargv` library.
+`libgetargv` is a library that allows you to get the arguments that were passed to another running process on macOS. It is intended to provide roughly the same functionality as reading from `/proc/<pid>/cmdline` on Linux. On macOS this is done by parsing the output of the `KERN_PROCARGS2` sysctl, which is <abbr title="always, in my observation">very often</abbr> implemented [incorrectly](https://getargv.narzt.cam/hallofshame.html), due to the overlooked possibility of leading empty arguments passed to the target process. This package is the Swift bindings for the `libgetargv` library.
 
 ## Permissions
 
@@ -10,7 +10,7 @@
 
 ## System Requirements
 
-macOS is required as this is a macOS specific `sysctl`, even BSD does not implement it. Your system must support `sysctl` and `KERN_PROCARGS2`, which probably means macOS [10.3](https://github.com/CamJN/xnu/blob/b52f6498893f78b034e2e00b86a3e146c3720649/bsd/sys/sysctl.h#L332) or later, though I haven't tested versions older than 10.7. You'll also need a non-ancient clang (c99 is required) or you'll have to override the compiler flags with `CC`, `EXTRA_CPPFLAGS`, and `EXTRA_CFLAGS`.
+macOS is required as this is a macOS specific `sysctl`, even BSD does not implement it. Your system must support `sysctl` and `KERN_PROCARGS2`, which probably means macOS [10.3](https://github.com/apple-oss-distributions/xnu/blob/xnu-517/bsd/sys/sysctl.h#L332) or later, though I haven't tested versions older than 10.7. You'll also need a non-ancient clang (c99 is required) or you'll have to override the compiler flags with `CC`, `EXTRA_CPPFLAGS`, and `EXTRA_CFLAGS`.
 
 ## Building `getargv.swift`
 
