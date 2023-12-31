@@ -16,23 +16,6 @@ extension String {
     }
 }
 
-extension Optional {
-
-    var isNil: Bool {
-        switch self {
-        case Optional.none:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isSome: Bool {
-        return !self.isNil
-    }
-
-}
-
 /// A class that holds a printable representation of the arguments of a process
 ///
 /// This class holds the output of ``GetArgvOfPid(pid:skip:nuls:)`` and provides a ``print()`` method,
