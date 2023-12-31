@@ -21,7 +21,7 @@ extension String {
 /// This class holds the output of ``GetArgvOfPid(pid:skip:nuls:)`` and provides a ``print()`` method,
 /// as well as access to the underlying `Array<CChar>` and even the `UnsafeBufferPointer<CChar>`.
 @available(macOS 11, *)
-public class PrintableArgvResult {
+public final class PrintableArgvResult {
     private var res: ArgvResult;
     init?(options: borrowing GetArgvOptions) {
         res = ArgvResult();
