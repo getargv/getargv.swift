@@ -24,9 +24,9 @@ struct getargv: ParsableCommand {
 
     mutating func run() throws {
         let options = GetArgvOptions(skip: skip ?? 0, pid: pid, nuls: !keepNuls)
-        var res = ArgvResult();
+        var res = ArgvResult()
         let result = withUnsafePointer(to: options, { get_argv_of_pid($0, &res) })
-        if (result) {
+        if result {
             print_argv_of_pid(res.start_pointer, res.end_pointer)
             free_ArgvResult(&res)
         } else {

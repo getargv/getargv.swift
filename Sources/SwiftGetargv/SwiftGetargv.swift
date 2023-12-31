@@ -5,10 +5,10 @@ import System
 @available(macOS 11, *)
 extension String {
     init(
-      cString cstr: UnsafePointer<CChar>,
-      encoding enc: String.Encoding
+        cString cstr: UnsafePointer<CChar>,
+        encoding enc: String.Encoding
     ) throws {
-        if case let .some(str) = String(cString: cstr, encoding: enc) {
+        if case .some(let str) = String(cString: cstr, encoding: enc) {
             self.init(str)
         } else {
             throw Errno(rawValue: EILSEQ)
@@ -16,7 +16,7 @@ extension String {
     }
 }
 
-/// A class that holds a printable representation of the arguments of a process
+/// A class that holds a printable representation of the arguments of a process.
 ///
 /// This class holds the output of ``GetArgvOfPid(pid:skip:nuls:)`` and provides a ``print()`` method,
 /// as well as access to the underlying `Array<CChar>` and even the `UnsafeBufferPointer<CChar>`.
@@ -26,33 +26,33 @@ public final class PrintableArgvResult {
     private var res = ArgvResult()
 
     init?(options: borrowing GetArgvOptions) {
-        if (!withUnsafePointer(to: options, { get_argv_of_pid($0, &res) })) { return nil; }
+        if !withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }) { return nil }
     }
 
     deinit {
-        if (res.buffer != nil) { free_ArgvResult(&res) }
+        if res.buffer != nil { free_ArgvResult(&res) }
     }
 
-    /// print the arguments to `stdout`
+    /// Print the arguments to `stdout`.
     ///
     /// prints the results of ``GetArgvOfPid(pid:skip:nuls:)`` to `stdout` exactly as parsed, including `nul` bytes if they were not replaced with `space`s.
     ///
     /// - Returns: A `Result` indicating if there was an error
-    public func print() -> Result<Void,Errno> {
+    public func print() -> Result<Void, Errno> {
         return if print_argv_of_pid(res.start_pointer, res.end_pointer) {
             .success(())
         } else {
             .failure(Errno(rawValue: errno))
         }
     }
-    /// the underlying buffer as an `Array<CChar>`
+    /// The underlying buffer as an `Array<CChar>`.
     ///
     /// > Warning: Be careful with this, there are no guarantees that the bytes that were passed to a process are in
     /// any sort of predictable format, other than being `nul` or `space` delimited as specified to ``GetArgvOfPid(pid:skip:nuls:)``.
-    public var array: Array<CChar> {
-        get { return Array(buffer) }
+    public var array: [CChar] {
+        return Array(buffer)
     }
-    /// the underlying `UnsafeBufferPointer<CChar>`
+    /// The underlying `UnsafeBufferPointer<CChar>`.
     ///
     /// > Warning: Be careful with this, there are no guarantees that the bytes that were passed to a process are in
     /// any sort of predictable format, other than being `nul` or `space` delimited as specified to ``GetArgvOfPid(pid:skip:nuls:)``.
@@ -61,7 +61,7 @@ public final class PrintableArgvResult {
     }
 }
 
-/// Get the arguments of a process in a printable format
+/// Get the arguments of a process in a printable format.
 ///
 /// Gets the arguments of a process specified by pid and returns them in a ``PrintableArgvResult`` class that can
 /// print them to `stdout`. There are formatting options too, for skipping past leading arguments and for replacing
@@ -86,7 +86,7 @@ public final class PrintableArgvResult {
 /// - Returns: A `Result` containing either a ``PrintableArgvResult`` holding the parsed arguments ready for printing, or an `Errno` representing what went wrong.
 @available(macOS 11, *)
 public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Result<PrintableArgvResult, Errno> {
-    let options = GetArgvOptions(skip:skip, pid:pid, nuls:nuls)
+    let options = GetArgvOptions(skip: skip, pid: pid, nuls: nuls)
     return if let res = PrintableArgvResult(options: options) {
         .success(res)
     } else {
@@ -94,7 +94,7 @@ public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Resu
     }
 }
 
-/// Get the arguments of a process in an inspectable format
+/// Get the arguments of a process in an inspectable format.
 ///
 /// Tries to interpret the bytes that were passed to `pid` as an `Array` of `String`s with the specified encoding.
 /// The encoding parameter is required because the argument's encoding isn't known to this function if there even
@@ -117,14 +117,19 @@ public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Resu
 ///   - encoding: Which `String.Encoding` to use to decode the argument bytes as `String`s.
 /// - Returns: A `Result` containing either an `Array<String>` holding the parsed arguments ready for use, or an `Errno` representing what went wrong.
 @available(macOS 11, *)
-public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding) -> Result<Array<String>, Errno> {
-    var res = ArgvArgcResult();
-    if (!get_argv_and_argc_of_pid(pid, &res)) { return .failure(Errno(rawValue: errno)) }
+public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding) -> Result<[String], Errno> {
+    var res = ArgvArgcResult()
+    if !get_argv_and_argc_of_pid(pid, &res) { return .failure(Errno(rawValue: errno)) }
 
-    defer{free_ArgvArgcResult(&res)}
+    defer { free_ArgvArgcResult(&res) }
 
     do {
-        return .success(Array(try UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc)).map { try String(cString: $0!, encoding: encoding) }))
+        return .success(
+            Array(
+                try UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc)).map {
+                    try String(cString: $0!, encoding: encoding)
+                })
+        )
     } catch {
         return .failure(Errno(rawValue: EILSEQ))
     }
