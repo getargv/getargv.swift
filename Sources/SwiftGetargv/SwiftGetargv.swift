@@ -22,9 +22,10 @@ extension String {
 /// as well as access to the underlying `Array<CChar>` and even the `UnsafeBufferPointer<CChar>`.
 @available(macOS 11, *)
 public class PrintableArgvResult {
-    var res: ArgvResult;
-    init() {
+    private var res: ArgvResult;
+    init?(options: borrowing GetArgvOptions) {
         res = ArgvResult();
+        if (!withUnsafePointer(to: options, { get_argv_of_pid($0, &res) })) { return nil; }
     }
 
     deinit {
@@ -37,10 +38,10 @@ public class PrintableArgvResult {
     ///
     /// - Returns: A `Result` indicating if there was an error
     public func print() -> Result<Void,Errno> {
-        if !print_argv_of_pid(res.start_pointer, res.end_pointer) {
-            return .failure(Errno(rawValue: errno))
+        return if print_argv_of_pid(res.start_pointer, res.end_pointer) {
+            .success(())
         } else {
-            return .success(())
+            .failure(Errno(rawValue: errno))
         }
     }
     /// the underlying buffer as an `Array<CChar>`
@@ -85,9 +86,11 @@ public class PrintableArgvResult {
 @available(macOS 11, *)
 public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Result<PrintableArgvResult, Errno> {
     let options = GetArgvOptions(skip:skip, pid:pid, nuls:nuls)
-    let res = PrintableArgvResult();
-    if (!withUnsafePointer(to: options, { get_argv_of_pid($0, &res.res) })) { return .failure(Errno(rawValue: errno)) }
-    return .success(res)
+    return if let res = PrintableArgvResult(options: options) {
+        .success(res)
+    } else {
+        .failure(Errno(rawValue: errno))
+    }
 }
 
 /// Get the arguments of a process in an inspectable format
