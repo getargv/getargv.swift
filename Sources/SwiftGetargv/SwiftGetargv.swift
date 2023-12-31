@@ -2,16 +2,30 @@ import Cgetargv
 import Foundation
 import System
 
+typealias CStringArray = UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>
+
 @available(macOS 11, *)
 extension String {
-    init(
+    static func decodeCString(
         cString cstr: UnsafePointer<CChar>,
         encoding enc: String.Encoding
-    ) throws {
+    ) -> Result<String, Errno> {
         if case .some(let str) = String(cString: cstr, encoding: enc) {
-            self.init(str)
+            .success(str)
         } else {
-            throw Errno(rawValue: EILSEQ)
+            .failure(Errno(rawValue: EILSEQ))
+        }
+    }
+}
+extension UnsafeBufferPointer {
+    func flatMapResult<Value, Error>(_ transform: (Self.Element) -> Result<Value, Error>) -> Result<[Value], Error> {
+        return self.reduce(into: .success([])) { acc, el in
+            if case .success(var arr) = acc {
+                switch transform(el) {
+                case let .success(r): arr.append(r)
+                case let .failure(err): acc = .failure(err)
+                }
+            }
         }
     }
 }
@@ -122,20 +136,12 @@ public func GetArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Resu
 ///   - encoding: Which `String.Encoding` to use to decode the argument bytes as `String`s.
 /// - Returns: A `Result` containing either an `Array<String>` holding the parsed arguments ready for use, or an `Errno` representing what went wrong.
 @available(macOS 11, *)
-public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding) -> Result<[String], Errno> {
+public func GetArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding = String.defaultCStringEncoding) -> Result<[String], Errno> {
     var res = ArgvArgcResult()
     if !get_argv_and_argc_of_pid(pid, &res) { return .failure(Errno(rawValue: errno)) }
 
     defer { free_ArgvArgcResult(&res) }
 
-    do {
-        return .success(
-            Array(
-                try UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>(start: res.argv, count: Int(res.argc)).map {
-                    try String(cString: $0!, encoding: encoding)
-                })
-        )
-    } catch {
-        return .failure(Errno(rawValue: EILSEQ))
-    }
+    return CStringArray(start: res.argv, count: Int(res.argc))
+        .flatMapResult { String.decodeCString(cString: $0!, encoding: encoding) }
 }
