@@ -57,7 +57,12 @@ public final class PrintableArgvResult {
     /// > Warning: Be careful with this, there are no guarantees that the bytes that were passed to a process are in
     /// any sort of predictable format, other than being `nul` or `space` delimited as specified to ``GetArgvOfPid(pid:skip:nuls:)``.
     public var buffer: UnsafeBufferPointer<CChar> {
-        get { return UnsafeBufferPointer<CChar>(start: res.start_pointer!, count: res.end_pointer - res.start_pointer + 1) }
+        let count = if res.start_pointer == nil {
+            0
+        } else {
+            res.end_pointer - res.start_pointer + 1
+        }
+        return UnsafeBufferPointer<CChar>(start: res.start_pointer, count: count)
     }
 }
 
