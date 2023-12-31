@@ -12,7 +12,7 @@ class StandardError: TextOutputStream {
 
 @available(macOS 11, *)
 @main
-struct getargv: ParsableCommand {
+struct Getargv: ParsableCommand {
     @Flag(name: [.customShort("0")], help: "Print args nul separated")
     var keepNuls: Bool = false
 
@@ -24,7 +24,7 @@ struct getargv: ParsableCommand {
 
     mutating func run() throws {
         do {
-            let result = try GetArgvOfPid(pid: pid, skip: skip ?? 0, nuls: !keepNuls).get()
+            let result = try getArgvOfPid(pid: pid, skip: skip ?? 0, nuls: !keepNuls).get()
             try result.print().get()
         } catch {
             var standardError = StandardError()

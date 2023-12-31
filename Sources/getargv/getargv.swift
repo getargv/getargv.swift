@@ -12,7 +12,7 @@ class StandardError: TextOutputStream {
 
 @available(macOS 11, *)
 @main
-struct getargv: ParsableCommand {
+struct Getargv: ParsableCommand {
     @Flag(name: [.customShort("0")], help: "Print args nul separated")
     var keepNuls: Bool = false
 
