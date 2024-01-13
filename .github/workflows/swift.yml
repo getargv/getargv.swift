@@ -6,11 +6,13 @@ name: Swift
 on:
   push:
     branches: [ "main" ]
+    tags: [ '*' ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
+    if: ${{ github.ref_type != 'tag' }}
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
