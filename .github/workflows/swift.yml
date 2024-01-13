@@ -36,15 +36,12 @@ jobs:
     - name: Build docs
       run: swift package generate-documentation
       working-directory: getargv-swift
-    - run: ls -R getargv-swift
+    - run: ls -R getargv-swift/.build/plugins/Swift-DocC/outputs
     - uses: actions/upload-artifact@v3
       with:
         name: docs
-        path: getargv-swift/Docs/SwiftGetargv.doccarchive.tar.gz
+        path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive
         if-no-files-found: error
-    - run: ls -R Docs && false
-      if: ${{ failure() }}
-      working-directory: getargv-swift
 
   release:
     if: ${{ github.ref_type == 'tag' }}
