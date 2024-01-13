@@ -37,9 +37,6 @@ jobs:
       run: swift package generate-documentation
       working-directory: getargv-swift
     - run: ls -R getargv-swift
-    - run: xcodebuild -list && false
-      if: ${{ failure() }}
-      working-directory: getargv-swift
     - uses: actions/upload-artifact@v3
       with:
         name: docs
