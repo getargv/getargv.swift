@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: getargv/getargv
         path: getargv
@@ -21,7 +21,7 @@ jobs:
     - name: Build libgetargv
       run: make install_dylib
       working-directory: getargv
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: getargv-swift
     - name: Build
@@ -31,12 +31,9 @@ jobs:
       run: swift test -v
       working-directory: getargv-swift
     - name: Build docs
-      run: |
-        swift package generate-xcodeproj
-        xcodebuild docbuild -scheme Cgetargv-Package -derivedDataPath ./Docs/
-        tar -cf Docs/SwiftGetargv.doccarchive.tar Docs/Build/Products/*/SwiftGetargv.doccarchive
-        gzip -9 Docs/SwiftGetargv.doccarchive.tar
+      run: swift package generate-documentation
       working-directory: getargv-swift
+    - run: ls -R getargv-swift
     - run: xcodebuild -list && false
       if: ${{ failure() }}
       working-directory: getargv-swift
