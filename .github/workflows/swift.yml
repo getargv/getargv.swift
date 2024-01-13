@@ -34,13 +34,15 @@ jobs:
       run: swift test -v
       working-directory: getargv-swift
     - name: Build docs
-      run: swift package generate-documentation
+      run: |
+        swift package generate-documentation
+        tar -cf .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive
+        gzip -9 .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar
       working-directory: getargv-swift
-    - run: ls -R getargv-swift/.build/plugins/Swift-DocC/outputs
     - uses: actions/upload-artifact@v3
       with:
         name: docs
-        path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive
+        path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
         if-no-files-found: error
 
   release:
