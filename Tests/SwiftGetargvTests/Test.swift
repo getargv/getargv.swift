@@ -5,7 +5,7 @@ import XCTest
 
 final class SwiftGetargvTests: XCTestCase {
     func testGetArgvOfPid() {
-        let expectedOutput = ProcessInfo.processInfo.arguments.joined(separator: " ").utf8CString
+        let expectedOutput = CommandLine.arguments.joined(separator: " ").utf8CString
 
         switch getArgvOfPid(pid: getpid(), nuls: true) {
         case .success(let actualOutput):
@@ -16,7 +16,7 @@ final class SwiftGetargvTests: XCTestCase {
     }
 
     func testGetArgvOfPidWithNuls() {
-        let expectedOutput = ProcessInfo.processInfo.arguments.flatMap { $0.utf8CString }
+        let expectedOutput = CommandLine.arguments.flatMap { $0.utf8CString }
 
         switch getArgvOfPid(pid: getpid()) {
         case .success(let actualOutput):
@@ -27,7 +27,7 @@ final class SwiftGetargvTests: XCTestCase {
     }
 
     func testGetArgvAndArgcOfPid() {
-        let expectedOutput = ProcessInfo.processInfo.arguments
+        let expectedOutput = CommandLine.arguments
 
         switch getArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII) {
         case .success(let actualOutput):

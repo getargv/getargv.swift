@@ -7,8 +7,8 @@ typealias CStringArray = UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>
 @available(macOS 11, *)
 extension String {
     static func decodeCString(
-        cString cstr: UnsafePointer<CChar>,
-        encoding enc: String.Encoding
+      cString cstr: UnsafePointer<CChar>,
+      encoding enc: String.Encoding
     ) -> Result<String, Errno> {
         if case .some(let str) = String(cString: cstr, encoding: enc) {
             .success(str)
@@ -21,9 +21,9 @@ extension UnsafeBufferPointer {
     func flatMapResult<Value, Error>(_ transform: (Self.Element) -> Result<Value, Error>) -> Result<[Value], Error> {
         return self.reduce(into: .success([])) { acc, el in
             if case .success(var arr) = acc {
-                switch transform(el) {
-                case .success(let r): arr.append(r)
-                case .failure(let err): acc = .failure(err)
+                acc = transform(el).map {
+                    arr.append($0)
+                    return arr
                 }
             }
         }
@@ -143,5 +143,5 @@ public func getArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding = String.d
     defer { free_ArgvArgcResult(&res) }
 
     return CStringArray(start: res.argv, count: Int(res.argc))
-        .flatMapResult { String.decodeCString(cString: $0!, encoding: encoding) }
+      .flatMapResult { String.decodeCString(cString: $0!, encoding: encoding) }
 }
