@@ -47,6 +47,7 @@ jobs:
     - name: Bump Version
       id: bump_version
       run: echo "new_version=$(git tag | sort -V | tail -1 | awk -F. 'BEGIN { OFS = "." } {$NF+=1; print $0}')" >> $GITHUB_OUTPUT
+      working-directory: getargv-swift
     - name: create && push tag
       run: |
         git tag '${{ steps.bump_version.outputs.new_version }}'
