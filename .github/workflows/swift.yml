@@ -6,13 +6,11 @@ name: Swift
 on:
   push:
     branches: [ "main" ]
-    tags: [ '*' ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
-    if: ${{ github.ref_type != 'tag' }}
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
@@ -46,16 +44,17 @@ jobs:
         name: docs
         path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
         if-no-files-found: error
-
-  release:
-    if: ${{ github.ref_type == 'tag' }}
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/download-artifact@v3
-      with:
-        path: pkg
+    - name: Bump Version
+      id: bump_version
+      run: echo "new_version=$(git tag | sort -V | tail -1 | awk -F. 'BEGIN { OFS = "." } {$NF+=1; print $0}')" >> $GITHUB_OUTPUT
+    - name: create && push tag
+      run: |
+        git tag '${{ steps.bump_version.outputs.new_version }}'
+        git push origin tag '${{ steps.bump_version.outputs.new_version }}'
+        git push origin HEAD:main
+      working-directory: getargv-swift
     - uses: softprops/action-gh-release@v1
       with:
-        files: pkg/docs
-        name: ${{ github.ref_name }}
+        files: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
+        name: ${{ steps.bump_version.outputs.new_version }}
+        tag_name: ${{ steps.bump_version.outputs.new_version }}
