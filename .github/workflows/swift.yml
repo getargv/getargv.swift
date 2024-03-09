@@ -28,7 +28,7 @@ jobs:
         path: getargv-swift
         fetch-tags: true
         fetch-depth: 0 # until https://github.com/actions/checkout/issues/1471 fixed
-    - uses: swift-actions/setup-swift@v1
+    - uses: swift-actions/setup-swift@v2
       with:
         swift-version: 5.9
     - name: Build
@@ -43,7 +43,7 @@ jobs:
         tar -cf .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive
         gzip -9 .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar
       working-directory: getargv-swift
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: docs
         path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
@@ -58,7 +58,7 @@ jobs:
         git push origin tag '${{ steps.bump_version.outputs.new_version }}'
         git push origin HEAD:main
       working-directory: getargv-swift
-    - uses: softprops/action-gh-release@v1
+    - uses: softprops/action-gh-release@v2
       with:
         files: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
         name: ${{ steps.bump_version.outputs.new_version }}
