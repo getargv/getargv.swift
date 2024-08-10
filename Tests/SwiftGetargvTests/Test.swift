@@ -1,39 +1,28 @@
 import Foundation
-import XCTest
+import Testing
 
 @testable import SwiftGetargv
 
-final class SwiftGetargvTests: XCTestCase {
-    func testGetArgvOfPid() {
-        let expectedOutput = CommandLine.arguments.joined(separator: " ").utf8CString
+@Suite()
+struct SwiftGetargvTests {
 
-        switch getArgvOfPid(pid: getpid(), nuls: true) {
-        case .success(let actualOutput):
-            XCTAssertEqual(actualOutput.array, Array(expectedOutput), "The Args are not correct.")
-        case .failure(let error):
-            XCTFail("getArgvOfPid failed with \(error)")
+    @available(macOS 11.0, *)
+    @Test("test getArgvOfPid NUL replacement", arguments: zip([true, false], [" ", "\0"]))
+        func GetArgvOfPidNuls(nuls: Bool, separator: String) throws {
+            let expectedOutput = CommandLine.arguments.joined(separator: separator).utf8CString
+
+            let actualOutput = try #require(try getArgvOfPid(pid: getpid(), nuls: nuls).get())
+
+            #expect(actualOutput.array == Array(expectedOutput))
         }
-    }
 
-    func testGetArgvOfPidWithNuls() {
-        let expectedOutput = CommandLine.arguments.flatMap { $0.utf8CString }
+    @available(macOS 11.0, *)
+    @Test("test getArgvAndArgcOfPid")
+        func testGetArgvAndArgcOfPid() throws {
+            let expectedOutput = CommandLine.arguments
 
-        switch getArgvOfPid(pid: getpid()) {
-        case .success(let actualOutput):
-            XCTAssertEqual(actualOutput.array, expectedOutput, "The Args are not correct.")
-        case .failure(let error):
-            XCTFail("getArgvOfPid failed with \(error)")
+            let actualOutput = try #require(try getArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII).get())
+
+            #expect(actualOutput == expectedOutput)
         }
-    }
-
-    func testGetArgvAndArgcOfPid() {
-        let expectedOutput = CommandLine.arguments
-
-        switch getArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII) {
-        case .success(let actualOutput):
-            XCTAssertEqual(actualOutput, expectedOutput, "The Args are not correct.")
-        case .failure(let error):
-            XCTFail("getArgvAndArgcOfPid failed with \(error)")
-        }
-    }
 }
