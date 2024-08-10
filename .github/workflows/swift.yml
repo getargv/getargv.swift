@@ -33,7 +33,7 @@ jobs:
         fetch-depth: 0 # until https://github.com/actions/checkout/issues/1471 fixed
     - uses: swift-actions/setup-swift@v2
       with:
-        swift-version: 5.9
+        swift-version: 5.10
     - name: Build
       run: swift build -v
       working-directory: getargv-swift
