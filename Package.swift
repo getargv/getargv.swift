@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Cgetargv",
+    name: "Getargv",
     platforms: [.macOS(.v10_15)],
     products: [
         .library(name: "SwiftGetargv", targets: ["SwiftGetargv"]),
@@ -13,7 +13,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
-        .package(url: "https://github.com/swiftlang/swift-testing",     from: "0.11.0"),
     ],
     targets: [
         .executableTarget(
@@ -44,23 +43,11 @@ let package = Package(
         ),
         .testTarget(
             name: "SwiftGetargvTests",
-            dependencies: [
-                "SwiftGetargv",
-                .product(
-                    name: "Testing",
-                    package: "swift-testing"
-                )
-            ]
+            dependencies: [ "SwiftGetargv" ]
         ),
         .testTarget(
             name: "CgetargvTests",
-            dependencies: [
-                "Cgetargv",
-                .product(
-                    name: "Testing",
-                    package: "swift-testing"
-                )
-            ]
+            dependencies: [ "Cgetargv" ]
         )
     ],
     cLanguageStandard: .c99 // https://developer.apple.com/documentation/packagedescription/clanguagestandard
