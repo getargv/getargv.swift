@@ -31,9 +31,13 @@ jobs:
         path: getargv-swift
         fetch-tags: true
         fetch-depth: 0 # until https://github.com/actions/checkout/issues/1471 fixed
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
     - uses: swift-actions/setup-swift@v2
       with:
-        swift-version: '5.10'
+        swift-version: '6.0'
+        # https://www.swift.org/download/
     - name: Build
       run: swift build -v
       working-directory: getargv-swift
