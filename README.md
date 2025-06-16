@@ -18,7 +18,8 @@ To make `getargv.swift`:
 
  - Install `libgetargv` to your system (see below).
  - Clone this repo and run `swift build` or
- - Add an entry to the dependencies array in your `Package` in your `Package.swift` file: `.package(url: "https://github.com/getargv/getargv.swift", from: "0.0.5")` and an entry in the dependencies array of your target `.product(name: "Cgetargv", package: "getargv.swift")`
+ - Add an entry to the dependencies array in your `Package` in your `Package.swift` file: `.package(url: "https://github.com/getargv/getargv.swift", from: "0.0.9")` and an entry in the dependencies array of your target `.product(name: "Cgetargv", package: "getargv.swift")`
+
 ## Installing `libgetargv`
 
 To get access to `libgetargv`, sign up for an appropriate [sponsorship tier](https://github.com/sponsors/CamJN).
@@ -30,4 +31,4 @@ Running `make install_dylib`, installs the library to the `/usr/local/` prefix b
 I'm working on building binary artifacts to install without compilation, using `pkg` installers, however even once that's done, depending on your system, it may still be necessary to compile from source; eg. if you have built your own xnu kernel with a custom `PID_MAX` value.
 
 ## Building `libgetargv`
-I've built `libgetargv` on macOS 10.7-13, using only the <abbr title="Command Line Tools">CLT</abbr> package, not the full Xcode install. If you need to override variables, do so inside the `make` command, eg: `make EXTRA_CPPFLAGS=-DMACRO EXTRA_CFLAGS=-std=c17 dylib`. Since swift did not exist when 10.6 was current, that should not be a concern for this project.
+I've built `libgetargv` on macOS 10.7-15, using only the <abbr title="Command Line Tools">CLT</abbr> package, not the full Xcode install. If you need to override variables, do so inside the `make` command, eg: `make EXTRA_CPPFLAGS=-DMACRO EXTRA_CFLAGS=-std=c17 dylib`. Since swift did not exist when 10.6 was current, that should not be a concern for this project.
