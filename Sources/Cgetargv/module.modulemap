@@ -1,5 +1,5 @@
 module Cgetargv [system] {
-  header "/usr/local/include/libgetargv.h"
+  header "./umbrella.h"
   link "getargv"
   export *
 }
