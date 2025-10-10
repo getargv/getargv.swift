@@ -12,7 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.5"),
     ],
     targets: [
         .executableTarget(
