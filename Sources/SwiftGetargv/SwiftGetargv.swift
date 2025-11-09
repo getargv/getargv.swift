@@ -10,7 +10,7 @@ extension String {
       cString cstr: UnsafePointer<CChar>,
       encoding enc: String.Encoding
     ) -> Result<String, Errno> {
-        if case .some(let str) = String(cString: cstr, encoding: enc) {
+        if case .some(let str) = unsafe String(cString: cstr, encoding: enc) {
             .success(str)
         } else {
             .failure(Errno(rawValue: EILSEQ))
@@ -19,7 +19,7 @@ extension String {
 }
 extension UnsafeBufferPointer {
     func flatMapResult<Value, Error>(_ transform: (Self.Element) -> Result<Value, Error>) -> Result<[Value], Error> {
-        return self.reduce(into: .success([])) { acc, el in
+        return unsafe self.reduce(into: .success([])) { acc, el in
             if case .success(var arr) = acc {
                 acc = transform(el).map {
                     arr.append($0)
@@ -35,16 +35,17 @@ extension UnsafeBufferPointer {
 /// This class holds the output of ``getArgvOfPid(pid:skip:nuls:)`` and provides a ``print()`` method,
 /// as well as access to the underlying `Array<CChar>` and even the `UnsafeBufferPointer<CChar>`.
 @available(macOS 11, *)
+@safe
 public final class PrintableArgvResult {
 
-    private var res = ArgvResult()
+    private var res = unsafe ArgvResult()
 
     init?(options: borrowing GetArgvOptions) {
-        if !withUnsafePointer(to: options, { get_argv_of_pid($0, &res) }) { return nil }
+        if unsafe !withUnsafePointer(to: options, { unsafe get_argv_of_pid($0, &res) }) { return nil }
     }
 
     deinit {
-        if res.buffer != nil { free_ArgvResult(&res) }
+        if unsafe res.buffer != nil { unsafe free_ArgvResult(&res) }
     }
 
     /// Print the arguments to `stdout`.
@@ -53,7 +54,7 @@ public final class PrintableArgvResult {
     ///
     /// - Returns: A `Result` indicating if there was an error
     public func print() -> Result<Void, Errno> {
-        return if print_argv_of_pid(res.start_pointer, res.end_pointer) {
+        return if unsafe print_argv_of_pid(res.start_pointer, res.end_pointer) {
             .success(())
         } else {
             .failure(Errno(rawValue: errno))
@@ -64,19 +65,19 @@ public final class PrintableArgvResult {
     /// > Warning: Be careful with this, there are no guarantees that the bytes that were passed to a process are in
     /// any sort of predictable format, other than being `nul` or `space` delimited as specified to ``getArgvOfPid(pid:skip:nuls:)``.
     public var array: [CChar] {
-        return Array(buffer)
+        return unsafe Array(buffer)
     }
     /// The underlying `UnsafeBufferPointer<CChar>`.
     ///
     /// > Warning: Be careful with this, there are no guarantees that the bytes that were passed to a process are in
     /// any sort of predictable format, other than being `nul` or `space` delimited as specified to ``getArgvOfPid(pid:skip:nuls:)``.
     public var buffer: UnsafeBufferPointer<CChar> {
-        let count = if res.start_pointer == nil {
+        let count = if unsafe res.start_pointer == nil {
             0
         } else {
-            res.end_pointer - res.start_pointer + 1
+            unsafe res.end_pointer - res.start_pointer + 1
         }
-        return UnsafeBufferPointer<CChar>(start: res.start_pointer, count: count)
+        return unsafe UnsafeBufferPointer<CChar>(start: res.start_pointer, count: count)
     }
 }
 
@@ -137,11 +138,11 @@ public func getArgvOfPid(pid: pid_t, skip: uint = 0, nuls: Bool = false) -> Resu
 /// - Returns: A `Result` containing either an `Array<String>` holding the parsed arguments ready for use, or an `Errno` representing what went wrong.
 @available(macOS 11, *)
 public func getArgvAndArgcOfPid(pid: pid_t, encoding: String.Encoding = String.defaultCStringEncoding) -> Result<[String], Errno> {
-    var res = ArgvArgcResult()
-    if !get_argv_and_argc_of_pid(pid, &res) { return .failure(Errno(rawValue: errno)) }
+    var res = unsafe ArgvArgcResult()
+    if unsafe !get_argv_and_argc_of_pid(pid, &res) { return .failure(Errno(rawValue: errno)) }
 
-    defer { free_ArgvArgcResult(&res) }
+    defer { unsafe free_ArgvArgcResult(&res) }
 
-    return CStringArray(start: res.argv, count: Int(res.argc))
-      .flatMapResult { String.decodeCString(cString: $0!, encoding: encoding) }
+    return unsafe CStringArray(start: res.argv, count: Int(res.argc))
+      .flatMapResult { unsafe String.decodeCString(cString: $0!, encoding: encoding) }
 }
