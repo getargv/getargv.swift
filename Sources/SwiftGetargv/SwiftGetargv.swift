@@ -4,32 +4,6 @@ import System
 
 typealias CStringArray = UnsafeBufferPointer<UnsafeMutablePointer<CChar>?>
 
-@available(macOS 11, *)
-extension String {
-    static func decodeCString(
-      cString cstr: UnsafePointer<CChar>,
-      encoding enc: String.Encoding
-    ) -> Result<String, Errno> {
-        if case .some(let str) = unsafe String(cString: cstr, encoding: enc) {
-            .success(str)
-        } else {
-            .failure(Errno(rawValue: EILSEQ))
-        }
-    }
-}
-extension UnsafeBufferPointer {
-    func flatMapResult<Value, Error>(_ transform: (Self.Element) -> Result<Value, Error>) -> Result<[Value], Error> {
-        return unsafe self.reduce(into: .success([])) { acc, el in
-            if case .success(var arr) = acc {
-                acc = transform(el).map {
-                    arr.append($0)
-                    return arr
-                }
-            }
-        }
-    }
-}
-
 /// A class that holds a printable representation of the arguments of a process.
 ///
 /// This class holds the output of ``getArgvOfPid(pid:skip:nuls:)`` and provides a ``print()`` method,
