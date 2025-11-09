@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Getargv",
-    platforms: [.macOS(.v10_15)],
+    platforms: [.macOS(.v13)],
     products: [
         .library(name: "SwiftGetargv", targets: ["SwiftGetargv"]),
         .library(name: "Cgetargv",     targets: ["Cgetargv"])
