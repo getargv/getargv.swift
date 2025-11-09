@@ -34,7 +34,7 @@ jobs:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
-    - uses: swift-actions/setup-swift@v2
+    - uses: swift-actions/setup-swift@7d6348b84c07b33515ee21ebc40bbf974cc19d40
       with:
         swift-version: 6
         # https://www.swift.org/download/
