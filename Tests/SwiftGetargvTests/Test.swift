@@ -44,7 +44,7 @@ struct SwiftGetargvTests {
         func GetArgvOfPidNuls(nuls: Bool, separator: String) throws {
             let expectedOutput = CommandLine.arguments.joined(separator: separator).utf8CString
 
-            let actualOutput = try #require(try getArgvOfPid(pid: getpid(), nuls: nuls).get())
+            let actualOutput = try getArgvOfPid(pid: getpid(), nuls: nuls).get()
 
             #expect(actualOutput.array == Array(expectedOutput))
         }
@@ -54,7 +54,7 @@ struct SwiftGetargvTests {
         func testGetArgvAndArgcOfPid() throws {
             let expectedOutput = CommandLine.arguments
 
-            let actualOutput = try #require(try getArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII).get())
+            let actualOutput = try getArgvAndArgcOfPid(pid: getpid(), encoding: String.Encoding.nonLossyASCII).get()
 
             #expect(actualOutput == expectedOutput)
         }
