@@ -36,8 +36,8 @@ jobs:
         xcode-version: latest-stable
     - uses: swift-actions/setup-swift@v3
       with:
-        swift-version: 6
-        # https://www.swift.org/download/
+        swift-version: 6.2
+        # Need to provide a major & minor version for swiftly. https://docs.swift.org/swift-book/documentation/the-swift-programming-language/compatibility
     - name: Build
       run: swift build -v
       working-directory: getargv-swift
