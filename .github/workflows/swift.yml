@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         repository: getargv/getargv
         path: getargv
@@ -26,7 +26,7 @@ jobs:
     - name: Install libgetargv
       run: sudo make install_dylib
       working-directory: getargv
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         path: getargv-swift
         fetch-tags: true
@@ -50,7 +50,7 @@ jobs:
         tar -cf .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive
         gzip -9 .build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar
       working-directory: getargv-swift
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: docs
         path: getargv-swift/.build/plugins/Swift-DocC/outputs/SwiftGetargv.doccarchive.tar.gz
